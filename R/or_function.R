@@ -17,33 +17,38 @@
 
 odds.n.ends <- function(x) {
   if(class(x)[1] != "glm") stop("x must be a glm object")
-    # model significance
-    modelsig <- round(c(x$null.deviance - x$deviance,
-                        x$df.null - x$df.residual,
-                        pchisq(x$null.deviance - x$deviance,
-                               x$df.null - x$df.residual,
-                               lower.tail = FALSE)), 3)
-    names(modelsig) <- c("Chi-squared", "d.f.", "p")
-    print("Logistic regression model significance")
-    print(modelsig)
-    cat("\n")
-
-    # model fit contingency tables
-    # error if na.action = na.exclude not used
-    print("Contingency tables (model fit): percent predicted")
-    print(addmargins(prop.table(table("% observed" = x$y,
-                                      "% predicted" = as.numeric(x$fitted.values>=0.5)))))
-    cat("\n")
-    print("Contingency tables (model fit): frequency predicted")
-    print(addmargins(table("n observed" = x$y,
-                           "n predicted" = as.numeric(x$fitted.values>=0.5))))
-    cat("\n")
-
-    # odds ratio calculate and print
-    oddsRatios <- exp(cbind(OR = coef(x), confint(x)))
-    print("Predictor odds ratios and 95% CI")
-    print(oddsRatios)
+  # model significance
+  modelsig <- round(c(x$null.deviance - x$deviance,
+                      x$df.null - x$df.residual,
+                      pchisq(x$null.deviance - x$deviance,
+                             x$df.null - x$df.residual,
+                             lower.tail = FALSE)), 3)
+  names(modelsig) <- c("Chi-squared", "d.f.", "p")
+  
+  # odds ratio calculate
+  oddsRatios <- exp(cbind(OR = coef(x), confint(x)))
+  
+  # model fit contingency tables
+  # error if na.action = na.exclude not used
+  # observed and predicted values percents
+  percTable <- addmargins(prop.table(table("Percent predicted" = as.numeric(x$fitted.values>=0.5),
+                                           "Percent observed" = x$y)[2:1, 2:1]))
+  # observed and predicted values frequencies
+  freqTable <- addmargins(table("Number predicted" = as.numeric(x$fitted.values>=0.5),
+                                "Number observed" = x$y)[2:1, 2:1])
+  
+  # sensitivity and specificity
+  sens <- freqTable[1,1]/(freqTable[1,1] + freqTable[2,1])
+  spec <- freqTable[2,2]/(freqTable[2,2] + freqTable[1,2])
+  
+  # consolidate 
+  resultList <- list(modelsig, percTable, freqTable, oddsRatios, sens, spec)
+  names(resultList) <- c("Logistic regression model significance",
+                         "Contingency tables (model fit): percent predicted",
+                         "Contingency tables (model fit): frequency predicted",
+                         "Predictor odds ratios and 95% CI",
+                         "Model sensitivity",
+                         "Model specificity")
+  return(resultList)
+  
 }
-
-
-
