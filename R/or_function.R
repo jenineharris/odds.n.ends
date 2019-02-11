@@ -16,8 +16,6 @@
 
 odds.n.ends <- function(x) {
   if(class(x)[1] != "glm") stop("x must be a glm object")
-  if(max(x$fitted.values < .5)) warning("specificity is 100%, sensitivity is 0%, check model")
-  if(min(x$fitted.values >= .5)) warning("sensitivity is 100%, specificity is 0%, check model")
   # model significance
   modelsig <- round(c(x$null.deviance - x$deviance,
                       x$df.null - x$df.residual,
