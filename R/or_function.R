@@ -14,9 +14,10 @@
 #' logisticModel <- glm(sick ~ age, na.action = na.exclude, family = binomial(logit))
 #' odds.n.ends(logisticModel)
 
-
 odds.n.ends <- function(x) {
   if(class(x)[1] != "glm") stop("x must be a glm object")
+  if(max(x$fitted.values < .5)) warning("specificity is 100%, sensitivity is 0%, check model")
+  if(min(x$fitted.values >= .5)) warning("sensitivity is 100%, specificity is 0%, check model")
   # model significance
   modelsig <- round(c(x$null.deviance - x$deviance,
                       x$df.null - x$df.residual,
@@ -31,11 +32,25 @@ odds.n.ends <- function(x) {
   # model fit contingency tables
   # error if na.action = na.exclude not used
   # observed and predicted values percents
-  percTable <- addmargins(prop.table(table("Percent predicted" = as.numeric(x$fitted.values>=0.5),
-                                           "Percent observed" = x$y)[2:1, 2:1]))
+  if(range(x$fitted.values)>=.5)
+          {percTable <- functionaddmargins(prop.table(table("Percent predicted" = as.numeric(x$fitted.values>=0.5),
+                                           "Percent observed" = x$y)[2:1, 2:1]))}
+  else if(max(x$fitted.values) < .5) 
+  {percTable <- matrix(c(0, 0, sum(x$y == 1), sum(x$y == 0)), ncol = 2, byrow = TRUE)
+  colnames(percTable) <- c("observed 1", "observed 0")
+  rownames(percTable) <- c("predicted 1", "predicted 0")
+  percTable <- addmargins(prop.table(as.table(percTable)))
+  percTable}
+  
   # observed and predicted values frequencies
-  freqTable <- addmargins(table("Number predicted" = as.numeric(x$fitted.values>=0.5),
-                                "Number observed" = x$y)[2:1, 2:1])
+  if(range(x$fitted.values)>=.5)
+          {freqTable <- addmargins(table("Number predicted" = as.numeric(x$fitted.values>=0.5),
+                                 "Number observed" = x$y)[2:1, 2:1])}
+  else if(max(x$fitted.values) < .5) {freqTable <- matrix(c(0, 0, sum(x$y == 1), sum(x$y == 0)), ncol = 2, byrow = TRUE)
+                                 colnames(freqTable) <- c("observed 1", "observed 0")
+                                 rownames(freqTable) <- c("predicted 1", "predicted 0")
+                                 freqTable <- addmargins(as.table(freqTable))
+                                 freqTable }                              
   
   # sensitivity and specificity
   sens <- freqTable[1,1]/(freqTable[1,1] + freqTable[2,1])
@@ -52,3 +67,5 @@ odds.n.ends <- function(x) {
   return(resultList)
   
 }
+
+
