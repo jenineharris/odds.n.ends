@@ -15,7 +15,9 @@
 #' odds.n.ends(logisticModel)
 
 odds.n.ends <- function(x) {
-  if(class(x)[1] != "glm") stop("x must be a glm object")
+  if(class(x)[1] != "glm") stop("x must be a glm object") |
+  if(range(x$fitted.values)[2] < .5) warning("specificity is 100%, sensitivity is 0%, check model") |
+  if(range(x$fitted.values)[1] >= .5) warning("sensitivity is 100%, specificity is 0%, check model")
   # model significance
   modelsig <- round(c(x$null.deviance - x$deviance,
                       x$df.null - x$df.residual,
@@ -23,38 +25,38 @@ odds.n.ends <- function(x) {
                              x$df.null - x$df.residual,
                              lower.tail = FALSE)), 3)
   names(modelsig) <- c("Chi-squared", "d.f.", "p")
-  
+
   # odds ratio calculate
-  oddsRatios <- exp(cbind(OR = coef(x), confint(x)))
-  
+  oddsRatios <- exp(cbind(OR = coef(x), stats::confint(x)))
+
   # model fit contingency tables
   # error if na.action = na.exclude not used
   # observed and predicted values percents
-  if(range(x$fitted.values)>=.5)
-          {percTable <- functionaddmargins(prop.table(table("Percent predicted" = as.numeric(x$fitted.values>=0.5),
+  if(max(x$fitted.values)>=.5)
+          {percTable <- addmargins(prop.table(table("Percent predicted" = as.numeric(x$fitted.values>=0.5),
                                            "Percent observed" = x$y)[2:1, 2:1]))}
-  else if(max(x$fitted.values) < .5) 
+  else if(max(x$fitted.values) < .5)
   {percTable <- matrix(c(0, 0, sum(x$y == 1), sum(x$y == 0)), ncol = 2, byrow = TRUE)
   colnames(percTable) <- c("observed 1", "observed 0")
   rownames(percTable) <- c("predicted 1", "predicted 0")
   percTable <- addmargins(prop.table(as.table(percTable)))
   percTable}
-  
+
   # observed and predicted values frequencies
-  if(range(x$fitted.values)>=.5)
+  if(max(x$fitted.values)>=.5)
           {freqTable <- addmargins(table("Number predicted" = as.numeric(x$fitted.values>=0.5),
                                  "Number observed" = x$y)[2:1, 2:1])}
   else if(max(x$fitted.values) < .5) {freqTable <- matrix(c(0, 0, sum(x$y == 1), sum(x$y == 0)), ncol = 2, byrow = TRUE)
                                  colnames(freqTable) <- c("observed 1", "observed 0")
                                  rownames(freqTable) <- c("predicted 1", "predicted 0")
                                  freqTable <- addmargins(as.table(freqTable))
-                                 freqTable }                              
-  
+                                 freqTable }
+
   # sensitivity and specificity
   sens <- freqTable[1,1]/(freqTable[1,1] + freqTable[2,1])
   spec <- freqTable[2,2]/(freqTable[2,2] + freqTable[1,2])
-  
-  # consolidate 
+
+  # consolidate
   resultList <- list(modelsig, percTable, freqTable, oddsRatios, sens, spec)
   names(resultList) <- c("Logistic regression model significance",
                          "Contingency tables (model fit): percent predicted",
@@ -63,7 +65,7 @@ odds.n.ends <- function(x) {
                          "Model sensitivity",
                          "Model specificity")
   return(resultList)
-  
+
 }
 
 
