@@ -1,5 +1,5 @@
 # odds.n.ends (version 0.1.4)
-
+<img src = "https://raw.githubusercontent.com/jenineharris/odds.n.ends/master/odds.n.endssticker.png" align = "right">
 ### March 8, 2021
 
 This version fixes a bug from prior versions that resulted in an error if all of the observations were predicted into a single category (all were predicted to have or not have the outcome of interest). It will be submitted to CRAN at a later date given restrictions on submitting new versions.
