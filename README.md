@@ -6,6 +6,9 @@ This version fixes a bug from prior versions that resulted in an error if all of
 
 To install this version, first install the `devtools` package. Then use the following to install version 0.1.4 of `odds.n.ends`:
 
-library(package = "devtools")
-install_github("jenineharris/odds.n.ends")
+`library(package = "devtools")`
+
+`install_github("jenineharris/odds.n.ends")`
+
+
 
