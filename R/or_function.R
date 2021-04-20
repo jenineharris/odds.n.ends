@@ -55,8 +55,8 @@ odds.n.ends <- function(mod,
                                 "Number observed" = mod$y))
 
   # sensitivity and specificity
-  sens <- freqTable[1,1]/(freqTable[1,1] + freqTable[2,1])
-  spec <- freqTable[2,2]/(freqTable[2,2] + freqTable[1,2])
+  spec <- freqTable[1,1]/(freqTable[1,1] + freqTable[2,1])
+  sens <- freqTable[2,2]/(freqTable[2,2] + freqTable[1,2])
 
   # count-R-squared
   countrsquared <- 100*(freqTable[1,1] + freqTable[2,2])/(freqTable[1,1] + freqTable[2,1] +
