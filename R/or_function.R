@@ -116,8 +116,8 @@ odds.n.ends <- function(mod,
   names(resultList) <- c("Logistic regression model significance",
                          "Contingency tables (model fit): frequency predicted",
                          "Count R-squared (model fit): percent correctly predicted",
-                         "Model sensitivity",
-                         "Model specificity",
+                         "Sensitivity",
+                         "Specificity",
                          "Predictor odds ratios and 95% CI")
   return(resultList)
 }
