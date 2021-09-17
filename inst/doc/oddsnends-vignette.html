@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>odds.n.ends vignette</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">odds.n.ends vignette</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="st">&quot;https://github.com/jenineharris/stuff/blob/master/stickerdraft.png?raw=true&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="150px" /></p>
+<div id="creating-a-small-data-set-for-demonstration" class="section level2">
+<h2>Creating a small data set for demonstration</h2>
+<p><code>odds.n.ends</code> was created in order to take the results from a binary logistic regression model estimated using the <code>glm()</code> package and compute model significance, model fit, and the odds ratios and 95% confidence intervals typically reported from binary logistic regression analyses.</p>
+<p>The small demonstration data set includes three variables. The first is a binary outcome variable (<code>sick</code>) with two values, 1 and 0 where 1 represents sick and 0 represents not sick. The second is an integer representing age in years (<code>age</code>) as one of the predictors, and a three-category nominal variable showing smoking status (<code>smoke</code>).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># enter demo data</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>sick &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>,</span>
+<span id="cb2-3"><a href="#cb2-3"></a>          <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>age &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">23</span>, <span class="dv">25</span>, <span class="dv">26</span>, <span class="dv">34</span>, <span class="dv">54</span>, <span class="dv">46</span>, <span class="dv">48</span>, <span class="dv">95</span>, <span class="dv">81</span>, <span class="dv">42</span>, <span class="dv">62</span>, <span class="dv">25</span>, <span class="dv">31</span>, <span class="dv">49</span>, <span class="dv">57</span>, <span class="dv">52</span>, <span class="dv">54</span>, <span class="dv">63</span>, <span class="dv">61</span>, <span class="dv">50</span>,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>         <span class="dv">43</span>, <span class="dv">35</span>, <span class="dv">26</span>, <span class="dv">74</span>, <span class="dv">34</span>, <span class="dv">46</span>, <span class="dv">43</span>, <span class="dv">65</span>, <span class="dv">81</span>, <span class="dv">42</span>, <span class="dv">62</span>, <span class="dv">25</span>, <span class="dv">21</span>, <span class="dv">47</span>, <span class="dv">51</span>, <span class="dv">22</span>, <span class="dv">34</span>, <span class="dv">59</span>, <span class="dv">26</span>, <span class="dv">55</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a>smoke &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>,<span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Current&#39;</span>, <span class="st">&#39;Former&#39;</span>, <span class="st">&#39;Never&#39;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co"># create data frame</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>smokeData &lt;-<span class="st"> </span><span class="kw">data.frame</span>(sick, age, smoke)</span></code></pre></div>
+</div>
+<div id="estimating-the-model" class="section level2">
+<h2>Estimating the model</h2>
+<p>The <code>glm()</code> function will be used to estimate a binary logistic regression model predicting the <code>sick</code> outcome based on <code>age</code> and <code>smoke</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># estimate the logistic regression model object</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>logisticModel &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> sick <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>smoke, <span class="dt">data =</span> smokeData, <span class="dt">na.action =</span> na.exclude, <span class="dt">family =</span> <span class="kw">binomial</span>(logit))</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># print model summary for the logistic model object</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">summary</span>(<span class="dt">object =</span> logisticModel)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = sick ~ age + smoke, family = binomial(logit), data = smokeData, 
+##     na.action = na.exclude)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.0490  -0.6251   0.3009   0.6955   1.9315  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -3.28649    1.58753  -2.070   0.0384 * 
+## age          0.10442    0.03711   2.814   0.0049 **
+## smokeFormer -1.12544    0.94693  -1.189   0.2346   
+## smokeNever  -2.47194    1.25103  -1.976   0.0482 * 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 54.548  on 39  degrees of freedom
+## Residual deviance: 37.896  on 36  degrees of freedom
+## AIC: 45.896
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="using-odds.n.ends-to-get-significance-fit-or-and-ci" class="section level2">
+<h2>Using odds.n.ends to get significance, fit, OR and CI</h2>
+<p>The summary contains model coefficients, coefficient significance, and deviance and AIC which are measures of lack of fit of the model. While this information is useful in determining which of the predictors is significant and whether the deviance (lack of fit) was reduced between a null model with no predictors in it and an estimated model.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># open odds.n.ends package</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">library</span>(<span class="dt">package =</span> <span class="st">&quot;odds.n.ends&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># get the  basics</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="kw">odds.n.ends</span>(<span class="dt">mod =</span> logisticModel)</span></code></pre></div>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre><code>## $`Logistic regression model significance`
+## Chi-squared        d.f.           p 
+##      16.652       3.000       0.001 
+## 
+## $`Contingency tables (model fit): frequency predicted`
+##                 Number observed
+## Number predicted  1  0 Sum
+##              1   19  4  23
+##              0    4 13  17
+##              Sum 23 17  40
+## 
+## $`Count R-squared (model fit): percent correctly predicted`
+## [1] 80
+## 
+## $`Model sensitivity`
+## [1] 0.826087
+## 
+## $`Model specificity`
+## [1] 0.7647059
+## 
+## $`Predictor odds ratios and 95% CI`
+##                     OR       2.5 %    97.5 %
+## (Intercept) 0.03738466 0.001102466 0.6610966
+## age         1.11006273 1.041062741 1.2081565
+## smokeFormer 0.32450861 0.045942281 2.0537937
+## smokeNever  0.08442065 0.005379054 0.8158007</code></pre>
+<p>The results show that the model was statistically significantly better than a baseline model at explaining the outcome [<span class="math inline">\(\chi^2\)</span>(3) = 16.652; p = .001]. The model correctly predicted 19 of those who were sick (<code>sick = 1</code>) and 13 of those who were not sick (<code>sick = 0</code>), for a total of 32 correctly predicted out of 40 (Count-<span class="math inline">\(R^2\)</span> = .80 or 80% correctly predicted). The model was more sensitive, with 82.6% of those who were sick (the cases) correctly predicted, and less specific, with 76.5% of the members of the reference group correctly predicted. Age was a statistically significant predictor of the outcome; for every one year increase in age, the odds of being sick increased by 11% (OR = 1.11; 95% CI: 1.04 - 1.21). There was no statistically significant difference in odds of being sick for former smokers compared to current smokers. Never smokers had 92% lower odds of being sick compared to current smokers; this decrease was statistically significant (OR = .08; 95% CI: .005 - .82).</p>
+<p>The <code>odds.n.ends</code> package has several additional options including the ability to get an ROC curve (use option <code>rocPlot = TRUE</code>) and histograms of predicted probabilities (use option <code>predProbPlot = TRUE</code>). Colors for these plots can be set with options <code>color1 =</code> and <code>color2 =</code>. Finally, the threshold for a predicted probability being counted as a case (outcome = 1) has a default value of .5, so any predicted probability that is .5 or higher will be counted as a case, and any predicted probability below .5 will be counted as a reference group member (outcome = 0). This threshold can be adjusted using the <code>thresh =</code> argument.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
