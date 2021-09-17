@@ -112,7 +112,7 @@ odds.n.ends <- function(mod,
     refPlot}
 
   # consolidate
-  resultList <- list(modelsig, freqTable, countrsquared, sens, spec, oddsRatios)
+  resultList <- list(modelsig, freqTable[c(2,1,3), c(2,1,3)], countrsquared, sens, spec, oddsRatios)
   names(resultList) <- c("Logistic regression model significance",
                          "Contingency tables (model fit): frequency predicted",
                          "Count R-squared (model fit): percent correctly predicted",

@@ -15,6 +15,6 @@ RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-09-17 18:37:39 UTC; harrisj
+Packaged: 2021-09-17 19:26:23 UTC; harrisj
 Author: Jenine Harris [aut, cre]
 Maintainer: Jenine Harris <harrisj@wustl.edu>
