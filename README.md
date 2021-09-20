@@ -14,3 +14,6 @@ Arguments can change the threshold for predicting an observation into the 0 (no/
 
 Version 0.1.4 is available on CRAN as of September 20, 2021.
 
+A vignette is found here: https://cran.r-project.org/web/packages/odds.n.ends/vignettes/oddsnends-vignette.html
+
+The package documentation is found here: https://cran.r-project.org/web/packages/odds.n.ends/odds.n.ends.pdf
